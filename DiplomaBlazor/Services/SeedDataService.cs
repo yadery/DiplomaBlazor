@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,11 @@ namespace DiplomaBlazor.Services
 
         public async Task SeedDataAsync()
         {
+            var foodCategory = await _context.FindAsync<ExpenseCategory>("Food");
+
+            if (foodCategory is null) return; // Уже отправлено
+
+
             var expenseCategories = new List<ExpenseCategory>()
             {
                 new("Food"), new("Fuel"), new("Shopping"), new("Others")
@@ -32,6 +38,8 @@ namespace DiplomaBlazor.Services
             {
                 await _context.AddItemAsync(location);
             }
+
+            
 
             foreach (var expenseCategory in expenseCategories)
             {

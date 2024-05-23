@@ -80,6 +80,10 @@ namespace DiplomaBlazor.Data
             return await Database.DeleteAsync<TTable>(primaryKey) > 0;
         }
 
+        public async Task<TTable> FindAsync<TTable>(object primaryKey) where TTable : class, new() =>
+                await Execute<TTable, TTable>(async () =>
+                await Database.FindAsync<TTable>(primaryKey));
+
         public async ValueTask DisposeAsync() => await _connection?.CloseAsync();
     }
 }

@@ -4,6 +4,8 @@ VisualStudioVersion = 17.0.31611.283
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiplomaBlazor", "DiplomaBlazor\DiplomaBlazor.csproj", "{B66E86A9-6AE1-486E-893F-8B1CF8074421}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wpf.test", "wpf.test\wpf.test.csproj", "{67FB1A42-B658-4F53-8BF2-C49D4FDF9AC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -16,12 +18,16 @@ Global
 		{B66E86A9-6AE1-486E-893F-8B1CF8074421}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B66E86A9-6AE1-486E-893F-8B1CF8074421}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B66E86A9-6AE1-486E-893F-8B1CF8074421}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{67FB1A42-B658-4F53-8BF2-C49D4FDF9AC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{67FB1A42-B658-4F53-8BF2-C49D4FDF9AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{67FB1A42-B658-4F53-8BF2-C49D4FDF9AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{67FB1A42-B658-4F53-8BF2-C49D4FDF9AC7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		        SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
 		SolutionGuid = {DCDA14B6-504D-4B64-B3D6-92D1F239D95B}
+		        SolutionGuid = {61F7FB11-1E47-470C-91E2-47F8143E1572}
 	EndGlobalSection
 EndGlobal

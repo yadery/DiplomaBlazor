@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using DiplomaBlazor.Data;
-using DiplomaBlazor.Services;
+
 
 namespace DiplomaBlazor;
 
@@ -23,8 +22,6 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 #endif
 
-		builder.Services.AddSingleton<WeatherForecastService>();
-
 		AddServices(builder.Services);
 
 		return builder.Build();
@@ -33,6 +30,8 @@ public static class MauiProgram
 	{
 		services.AddSingleton<DatabaseContext>()
 				.AddTransient<SeedDataService>();
+
+		services.AddTransient<AuthService>();
 	}
 }
 
