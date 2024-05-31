@@ -18,25 +18,30 @@ namespace DiplomaBlazor.Services
 
         public async Task SeedDataAsync()
         {
-            var foodCategory = await _context.FindAsync<ExpenseCategory>("Food");
+            var foodCategory = await _context.FindAsync<ExpenseCategory>("Еда");//food
 
-            if (foodCategory is null) return; // Уже отправлено
+            if (foodCategory is not null) 
+                return; // Уже отправлено
 
 
             var expenseCategories = new List<ExpenseCategory>()
             {
-                new("Food"), new("Fuel"), new("Shopping"), new("Others")
+                new("Еда"), new("Топливо"), new("Покупки"), new("Другое") //food fuel shopping other
             };
 
             var locationCategories = new List<LocationCategory>
             {
-                new LocationCategory("Beach", "/images/")
+                new LocationCategory("Пляж", "/images/beach.png"),
+                new LocationCategory("Город", "/images/city.png"),
+                new LocationCategory("Горы", "/images/mountains.png"),
+                new LocationCategory("Дорожное", "/images/car.png"),
+                new LocationCategory("Другое", "/images/other.png")
                 //добавить категории и картинки
             };
 
             foreach (var location in locationCategories) 
             {
-                await _context.AddItemAsync(location);
+                await _context.AddItemAsync<LocationCategory>(location);
             }
 
             

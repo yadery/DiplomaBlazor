@@ -1,0 +1,11 @@
+﻿@page "/trips"
+@inject AppState AppState
+<h3>Trips</h3>
+
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.SetSelectedMenuItem(AppConstants.MenuItems.Trips);
+    }
+}

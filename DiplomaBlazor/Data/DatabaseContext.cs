@@ -24,7 +24,7 @@ namespace DiplomaBlazor.Data
             await Database.CreateTableAsync<TTable>();
         }
 
-        private async Task<AsyncTableQuery<TTable>> GetTableAsync<TTable>() where TTable : class, new()
+        public async Task<AsyncTableQuery<TTable>> GetTableAsync<TTable>() where TTable : class, new()
         {
             await CreateTableIfNotExists<TTable>();
             return Database.Table<TTable>();

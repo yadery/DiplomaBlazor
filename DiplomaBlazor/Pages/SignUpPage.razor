@@ -1,7 +1,79 @@
 ﻿@page "/signup"
 
-<h3>SignUpPage</h3>
+@layout AuthLayout
+
+@inject NavigationManager NavigationManager
+@inject AuthService AuthService
+@inject MauiInterop Maui
+
+<EditForm Model="_model" OnValidSubmit="SignUpAsync">
+    <DataAnnotationsValidator />
+    <div class="card border-0 shadow-sm">
+        <div class="card-body text-center">
+            <h4>Привет</h4>
+            <p class="text-muted">Зарегистрироваться</p>
+            <div clasd="vstack text-start">
+                <div class="mb-3">
+                    <label class="form-label">Имя</label>
+                    <InputText @bind-Value="_model.Name" placeholder="Введите имя"
+                               class="form-control rounded-pill" fs-6 />
+                    <ValidationMessage For="() => _model.Name" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Имя пользователя</label>
+                    <InputText @bind-Value="_model.Username" placeholder="Введите имя пользователя"
+                               class="form-control rounded-pill" fs-6 />
+                    <ValidationMessage For="() => _model.Username" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Пароль</label>
+                    <InputText @bind-Value="_model.Password" type="password" placeholder="Введите пароль"
+                               class="form-control rounded-pill" fs-6 />
+                    <ValidationMessage For="() => _model.Password" />
+                </div>
+                <button type="submit" class="btn btn-primary rounded-pill">Зарегистрироваться</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+<p class="text-end mt-3">Уже есть аккаунт? <NavLink href="/signin">Войти</NavLink></p>
+
+
 
 @code {
+    private SignUpModel _model = new();
 
+    private async Task SignUpAsync()
+    {
+        //Показать загрузку ActivityIndicator
+        Maui.ShowLoader();
+        try
+        {
+            await Task.Delay(5000);
+            var result = await AuthService.SignUpAsync(_model);
+            if (result.IsSuccess)
+            {
+                //редирект на главную
+                NavigationManager.NavigateTo("/home", replace: true);
+            }
+            else
+            {
+                await Maui.ShowErrorAlertAsync(result.Error ?? "Ошибка регистрации");
+            }
+        }
+        catch (Exception ex)
+        {
+            await Maui.ShowErrorAlertAsync(ex.Message);
+        }
+        finally
+        {
+            Maui.HideLoader();
+        }
+    }
 }
+<style type="text/css" scoped>
+    .logo {
+        height: 150px;
+        width: 150px;
+    }
+</style>

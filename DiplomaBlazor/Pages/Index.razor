@@ -2,17 +2,19 @@
 
 @inject NavigationManager NavigationManager
 @inject AuthService Auth
+@inject MauiInterop Interop
 
 @code{
-    protected override void OnInitialized()
+    protected override void OnInitialized()                                               
     {
+        Interop.HideLoader();
         if (Auth.IsAuthenticated)
         {
-            NavigationManager.NavigateTo("/home");
+            NavigationManager.NavigateTo("/home", replace: true);
         }
         else
         {
-            NavigationManager.NavigateTo("/signin");
+            NavigationManager.NavigateTo("/signin", replace: true);
         }
     }
 }

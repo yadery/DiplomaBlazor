@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using CommunityToolkit.Maui;
+using DiplomaBlazor.ViewModels;
+using Microsoft.Extensions.Logging;
 
 
 namespace DiplomaBlazor;
@@ -13,7 +15,8 @@ public static class MauiProgram
 			.ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-			});
+			})
+            .UseMauiCommunityToolkit();
 
 		builder.Services.AddMauiBlazorWebView();
 
@@ -28,10 +31,16 @@ public static class MauiProgram
 	}
 	private static void AddServices(IServiceCollection services)
 	{
+		services.AddSingleton<AppViewModel>()
+			.AddSingleton<MauiInterop>()
+			.AddSingleton<AppState>();
+
 		services.AddSingleton<DatabaseContext>()
 				.AddTransient<SeedDataService>();
 
-		services.AddTransient<AuthService>();
+		services.AddTransient<AuthService>()
+                .AddSingleton<TripsService>()
+				.AddTransient<DropDownsService>();
 	}
 }
 

@@ -21,6 +21,17 @@ namespace DiplomaBlazor.Data
         public DateTime? ToDate { get; set;}
         public DateTime AdedOn { get; set; }
         public  DateTime ModefiedOn { get; set; }
-        public TripStatus Status { get; set; } = TripStatus.Planned;
+        private TripStatus _status = TripStatus.Planned;
+        public TripStatus Status
+        {
+            get => _status;
+            set { 
+                DisplayStatus = value.ToString();
+                _status = value;
+            }
+        }
+
+        [Ignore]
+        public string DisplayStatus { get; set; }
     }
 }

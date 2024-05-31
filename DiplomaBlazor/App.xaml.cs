@@ -6,11 +6,11 @@ public partial class App : Application
 {
     private readonly SeedDataService _seedDataService;
 
-    public App(SeedDataService seedDataService)
+    public App(SeedDataService seedDataService, AppViewModel viewModel)
 	{
 		InitializeComponent();
 
-		MainPage = new MainPage();
+		MainPage = new MainPage(viewModel);
 		_seedDataService = seedDataService;       
     }
 

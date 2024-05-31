@@ -1,0 +1,184 @@
+﻿@page "/trips/add"
+
+@layout InnerPagesLayout
+
+@inject MauiInterop Interop
+@inject DropDownsService DropDowns
+@inject TripsService TripService
+@inject AppState AppState
+
+@inject NavigationManager NavigationManager
+
+<div class="img-container m-0 p-0 vw-100"></div>
+
+<EditForm Model="_model" OnValidSubmit="SaveTripAsync">
+    <DataAnnotationsValidator />
+    
+    <div class="form-container">
+        <div class="form-body bg-white shadow d-flex flex-column">
+            <h3 class="mt-3 text-center">Добавить</h3>
+            <div class="mt-3 flex-grow-1">
+                <div class="mb-3">
+                    <label class="forn-label">Категория</label>
+                    <InputText type="hidden" @bind-Value="_model.CategoryImage"/>
+                    <div class="d-flex flex-wrap justify-content-around">
+                        @foreach(var category in _locationCategories)
+                        {
+                            var iconClass = "bx-check-circle text-muted";
+                            var borderClass = "";
+                            var nameClass = "text-muted";
+                            if (_model.CategoryImage == category.Image)
+                            {
+                                iconClass = "bxs-check-circle text-success";
+                                borderClass = "border-success shadow";
+                                nameClass = "text-dark";
+                            }
+                            <div class="rounded ps-1 vstack text-center border m-1 @borderClass" 
+                            @onclick="() => ToggleCategorySelection(category)">
+                                <i class="position-absolute bx @iconClass"></i>
+                                <img class="mx-auto category-img" src="@category.Image"/>
+                                <label class="category-label @nameClass">@category.Name</label>
+                            </div>    
+                        }
+                        <ValidationMessage For="() => _model.CategoryImage"/>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Название</label>
+                    <InputText @bind-Value="_model.Title" class="form-control rounded-pill fs-6" placeholder="Название путешествия"/>
+                    <ValidationMessage For="() => _model.Title" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Локация (Город/Страна)</label>
+                    <InputText @bind-Value="_model.Location" class="form-control rounded-pill fs-6" 
+                    placeholder="Место назначения" />
+                    <ValidationMessage For="() => _model.Location" />
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label">Дата отправления</label>
+                            <InputDate @bind-Value="_model.FromDate" class="form-control rounded-pill fs-6" 
+                            placeholder="Дата отправления" />
+                            <ValidationMessage For="() => _model.FromDate" />
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="mb-3">
+                            <label class="form-label">Дата окончания</label>
+                            <InputDate @bind-Value="_model.ToDate" class="form-control rounded-pill fs-6"
+                                       placeholder="Дата окончания" />
+                            <ValidationMessage For="() => _model.ToDate" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Статус</label>
+                    
+                    <InputSelect @bind-Value="_model.DisplayStatus" class="form-control rounded-pill fs-6">
+                        @foreach(var status in _statuses)
+                        {
+                            <option value="@status">@status</option>
+                        }
+                    </InputSelect>
+
+                    <ValidationMessage For="() => _model.DisplayStatus" />
+                </div>
+            </div>
+
+            <ValidationSummary />
+            <div class="row my-3">
+                <div class="col-1"></div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-outline-danger shadow">
+                        <i class="bx bx-x"></i>
+                    </button> 
+                </div>
+                <div class="col-1"></div>
+                <div class="col-7">
+                    <button type="submit" class="btn btn-primary rounded-pill shadow">Сохранить</button>
+                </div>
+                <div class="col-1"></div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    Trip _model = new();
+
+    private LocationCategory[] _locationCategories = Array.Empty<LocationCategory>();
+    private string[] _statuses = Array.Empty<string>();
+    protected override  async Task OnInitializedAsync()
+    {
+        AppState.SetInnerPageTitle("Добавить путешествие");
+        Interop.ShowLoader();
+        _locationCategories = await DropDowns.GetLocationCategoriesAsync();
+        _statuses = DropDowns.GetTripStatuses();
+        Interop.HideLoader();
+    }
+
+    private void ToggleCategorySelection(LocationCategory category)
+    {
+        if (_model.CategoryImage == category.Image)
+            _model.CategoryImage = string.Empty;
+        else
+            _model.CategoryImage = category.Image;
+    }
+
+    private async Task SaveTripAsync()
+    {
+        Interop.ShowLoader();
+        try
+        {
+            var result = await TripService.SaveTripAsync(_model);
+            if (result.IsSuccess)
+            {
+                await Interop.ShowToastAsync("Путешествие сохранено!");
+                NavigationManager.NavigateTo("/home", replace: true);
+            }
+            else
+            {
+                await Interop.ShowErrorAlertAsync(result.Error ?? "Ошибка при сохранении");
+            }
+        }
+        catch (Exception ex)
+        {
+            await Interop.ShowErrorAlertAsync(ex.Message);
+        }
+        finally
+        {
+            Interop.HideLoader();    
+        }
+    }
+}
+
+<style type="text/css">
+    .img-container{
+        background-image: url('/images/islandBackground.jpg');
+        background-position-y: -100px;
+        height: 250px;
+    }
+
+    .form-container{
+        background-color:transparent;
+        margin-top: -200px;
+        padding: 25px 10px;
+    }
+    .form-body{
+        background-color:white;
+        border-radius: 40px 40px 0 0;
+        min-height: calc(100vh - 200px);
+        padding: 15px;
+    }
+    .category-img{
+        width: 25px;
+        height: 25px;
+    }
+    .category-label{
+        font-size: 12px;
+    }
+</style>

@@ -1,0 +1,71 @@
+﻿@page "/trips/{tripId:int}"
+
+@layout InnerPagesLayout
+
+@inject MauiInterop Interop
+@inject TripsService TripService
+
+@inject NavigationManager NavigationManager
+@inject AppState AppState
+
+@if (_trip is not null)
+{
+    <div class="container-fluid m-0 p-0">
+        <img src="@_trip.CategoryImage" class="img-fluid"/>
+    </div>
+    <div class="d-flex justify-content-center w-100">
+        <div class="location bg-white shadow vw-95 px-3 py2">
+            <div class="d-felx justify-content-between align-content-center">
+                <h3>@_trip.Title</h3>
+                <span class="rounded-pill text-white m-0 px-2 fs-12">@_trip.DisplayStatus</span>
+            </div>
+            <div class="vstack">
+                <label class="m-0 px-2 py-1">
+                    <i class="bx bx-map m-0 p-0 me-2"></i>
+                    <span class="">@_trip.Location</span>
+                </label>
+                <label class="m-0 px-2 py-1">
+                    <i class="bx bx-calendar m-0 p-0 me-2"></i>
+                    <span class="">@_trip.FromDate?.ToShortDateString() - @_trip.ToDate?.ToShortDateString()</span>
+                </label>
+                <label class="m-0 px-2 py-1">
+                    <i class="bx bx-money m-0 p-0 me-2"></i>
+                    <span class="">@_totalExpense.ToString("c").</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" my-3 p-2>
+        <div class="d-flex justify-content-between align-items-center w-100">
+            <h4 class="m-0 ">Расходы</h4>
+            <label class="bg-light text-dark rounded-pill p-0 px-2 py-1 m-0 d-flex align-items-center"
+               @onclick="GoToAddExpensePage">
+                <i class="bx bx-plus text-dark m-0 p-0"></i>
+                <span class="text-dark">Добавить траты</span>
+            </label>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int TripId { get; set; }
+    private Trip _trip;
+
+    private double _totalExpense = 0;
+
+
+    protected override async Task OnInitializedAsync()
+    {        
+        Interop.ShowLoader();
+        _trip = await TripService.GetTripAsync(TripId);
+        AppState.SetInnerPageTitle(_trip.Title);
+        Interop.HideLoader();
+    }
+
+    private void GoToAddExpensePage()
+    {
+        NavigationManager.NavigateTo($"/tips/{TripId}/expenses/add");
+
+    }
+}

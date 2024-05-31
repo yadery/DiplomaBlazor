@@ -1,9 +1,12 @@
-﻿namespace DiplomaBlazor;
+﻿using DiplomaBlazor.ViewModels;
+
+namespace DiplomaBlazor;
 
 public partial class MainPage : ContentPage
 {
-	public MainPage()
+	public MainPage(AppViewModel viewModel)
 	{
 		InitializeComponent();
+		BindingContext = viewModel;
 	}
 }
