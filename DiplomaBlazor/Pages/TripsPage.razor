@@ -1,11 +1,76 @@
 ﻿@page "/trips"
 @inject AppState AppState
-<h3>Trips</h3>
+@inject NavigationManager NavigationManager
+@inject TripsService TripsService
+@inject MauiInterop Interop
+
+
+<div class="container">
+    @if (!_trips.Any())
+    {
+        <div class="empty-trips-container d-flex w-100 flex-column align-items-center justify-content-center">
+            <label class="text-muted fs-4 mb-2">Вы еще не добавили путешествия</label>
+            <button type="button" class="btn btn-secondary rounded-pill" @onclick="GoToAddTripPage">
+                <i class="bx bx-plus m-0 p-0"></i>
+                <span>Добавить</span>
+            </button>
+        </div>
+    }
+    else
+    {
+        <div class="row py-3 ">
+            @foreach (var trip in _trips)
+            {
+                <div class="col-12 mb-3"> 
+                    <div class="card" @onclick="() => GoToSingleTripPage(trip.Id)">
+                        <div class="hstack gap-3">
+                            <img src="@trip.CategoryImage" class="trip-img" />
+                            <div class="vr"></div>
+                            <div class="vstack p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3>@trip.Title</h3>
+                                    <span class="rounded-pill @trip.StatusBgColor text-white m-0 px-2 fs-12">@trip.DisplayStatus</span>
+                                </div>
+                                <label class="m-0 px-2 py-1">
+                                    <i class="bx bx-map p-2 me-2"></i>
+                                    <span>@trip.Location</span>
+                                </label>
+                                <label class="m-0 px-2 py-1">
+                                    <i class="bx bx-calendar p-2 me-2"></i>
+                                    <span>@trip.FromDate?.ToShortDateString() - @trip.ToDate?.ToShortDateString()</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }    
+        </div>
+    }
+</div>
 
 
 @code {
+    private IEnumerable<Trip> _trips = Enumerable.Empty<Trip>();
     protected override async Task OnInitializedAsync()
-    {
+    {        
+        AppState.AddTabbarItems(new TabbarItem("bx-plus bx-sm", GoToAddTripPage));
         AppState.SetSelectedMenuItem(AppConstants.MenuItems.Trips);
+        Interop.ShowLoader();
+
+        _trips = await TripsService.GetTripsAsync(1, 1000);
+        Interop.HideLoader();
     }
+
+    private void GoToAddTripPage() => NavigationManager.GoToInnerPage("/trips/add");
+
+    private void GoToSingleTripPage(int tripId) => NavigationManager.GoToInnerPage($"/trips/{tripId}");
 }
+<style type="text/css" scoped>
+    .empty-trips-container {
+        height: calc(100vh - var(--navbar-height));
+    }
+
+    .trip-img{
+        width: 100px;
+    }
+</style>

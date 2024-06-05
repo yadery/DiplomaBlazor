@@ -53,15 +53,15 @@
     protected override async Task OnInitializedAsync()
     {
         AppState.SetSelectedMenuItem(AppConstants.MenuItems.Home);
-
+        AppState.AddTabbarItems(new TabbarItem("bx-user-circle bx-sm", () => NavigationManager.NavigateTo("/settings")));
         Interop.ShowLoader();
         _trips = await TripService.GetTripsAsync(1, 6);
         Interop.HideLoader();
     }
 
-    private void GoToAddTripPage() => NavigationManager.NavigateTo("/trips/add");
+    private void GoToAddTripPage() => NavigationManager.GoToInnerPage("/trips/add");
 
-    private void GoToSingleTripPage(int tripId) => NavigationManager.NavigateTo($"/trips/{tripId}");
+    private void GoToSingleTripPage(int tripId) => NavigationManager.GoToInnerPage($"/trips/{tripId}");
 }
 
 <style type="text/css" scoped>

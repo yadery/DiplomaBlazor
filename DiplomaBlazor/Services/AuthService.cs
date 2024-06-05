@@ -9,7 +9,7 @@ namespace DiplomaBlazor.Services
 {
     internal class AuthService
     {
-        private const string LogInKey = "logged-in";
+        private const string LogggedInKey = "logged-in";
         private readonly IPreferences _preferences;
         private readonly DatabaseContext _context;
 
@@ -18,7 +18,9 @@ namespace DiplomaBlazor.Services
             _preferences = Preferences.Default;
             _context = context;
         }
-        public bool IsAuthenticated => _preferences.ContainsKey(LogInKey);
+        public bool IsSignedIn => _preferences.ContainsKey(LogggedInKey);
+
+        public LoggedInUser CurrentUser => LoggedInUser.LoadFromJson(_preferences.Get<string>(LogggedInKey, string.Empty));
 
         public async Task<MethodResult> SignUpAsync(SignUpModel model)
         {
@@ -42,7 +44,7 @@ namespace DiplomaBlazor.Services
                 u => u.UserName == model.Username && u.Password == model.Password);
             var user = users.FirstOrDefault();
 
-            if (user != null) 
+            if (user is not null) 
             {
                 SetUser(user);
                 return MethodResult.Success();
@@ -54,12 +56,26 @@ namespace DiplomaBlazor.Services
         private void SetUser(User user)
         { 
             var loggedInUser = new LoggedInUser(user.Id, user.Name);
-            _preferences.Set(LogInKey, loggedInUser.ToJson());
+            _preferences.Set(LogggedInKey, loggedInUser.ToJson());
         }
         
         public void SignOut() 
         {
-            _preferences.Remove(LogInKey);
+            _preferences.Remove(LogggedInKey);
+        }
+
+        public async Task ChangeNameAsync(string newName)
+        {
+            var dbUser = await _context.FindAsync<User>(CurrentUser.Id);
+            dbUser.Name = newName;
+            await _context.UpdateItemAsync(dbUser);
+            SetUser(dbUser);
+        }
+        public async Task ChangePasswordAsync(string newPassword)
+        {
+            var dbUser = await _context.FindAsync<User>(CurrentUser.Id);
+            dbUser.Password = newPassword;
+            await _context.UpdateItemAsync(dbUser);
         }
     }
 }

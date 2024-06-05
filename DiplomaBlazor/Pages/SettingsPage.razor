@@ -1,10 +1,86 @@
 ﻿@page "/settings"
 @inject AppState AppState
-<h3>Settings</h3>
+@inject AuthService Auth
+
+@inject MauiInterop MauiInterop
+@inject NavigationManager NavigationManager
+
+<div class="container p-3">
+    <div class="d-flex flex-column justify-content-center align-items-center h-remaining">
+        <label class="rounded-circle text-uppercase bg-success bg-gradient text-white text-center fw-bold shadow-lg avatar">
+            @Auth.CurrentUser.Name?[0]
+        </label>
+        <div class="flex-grow-1 my-3 py-2 w-100 d-flex align-items-center">
+            <ul class="list-group list-group-flush w-100">
+                <li class="list-group-item" @onclick="ChangeNameAsync">
+                    <div class="hstack gap-3"> 
+                        <i class="bx bx-sm bx-user"></i>
+                        <label>Мой профиль</label>
+                    </div>
+                </li>
+                <li class="list-group-item" @onclick="ChangePasswordAsync">
+                    <div class="hstack gap-3">
+                        <i class="bx bx-sm bx-lock"></i>
+                        <label>Изменить пароль</label>
+                    </div>
+                </li>
+                <li class="list-group-item" @onclick="GoToManageExpenseCategoriesPage">
+                    <div class="hstack gap-3">
+                        <i class="bx bx-sm bx-grid"></i>
+                        <label>Управление категориями расходов</label>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <label class="bg-danger rounded-pill py-1 px-3 text-white m-0 d-flex align-items-center" 
+            @onclick="SignOut">
+            <i class="bx bx-log-out m-0 p-0 me-2"></i>
+            <span>Выйти</span>
+        </label>
+    </div>
+</div>
 
 @code {
     protected override async Task OnInitializedAsync()
     {
         AppState.SetSelectedMenuItem(AppConstants.MenuItems.Settings);
+        AppState.AddTabbarItems(new TabbarItem("bx-sm bx-info-circle", () => Launcher.Default.TryOpenAsync("https://github.com/yadery/DiplomaBlazor")));
     }
+    private void SignOut()
+    {
+        Auth.SignOut();
+        NavigationManager.NavigateTo("/signin", replace: true);
+    }
+    private async Task ChangeNameAsync()
+    {
+        var newName = await MauiInterop.ShowPromptAsync("Ваше имя", "Введите ваше имя", "Сохранить", Auth.CurrentUser.Name);
+        if (!string.IsNullOrEmpty(newName))
+        {
+            MauiInterop.ShowLoader();
+            await Auth.ChangeNameAsync(newName);
+            MauiInterop.HideLoader();
+        }
+    }
+    private async Task ChangePasswordAsync()
+    {
+        var newPassword = await MauiInterop.ShowPromptAsync("Изменить пароль?", "Введите новый пароль", "Сохранить", string.Empty);
+        if (!string.IsNullOrEmpty(newPassword))
+        {
+            MauiInterop.ShowLoader();
+            await Auth.ChangePasswordAsync(newPassword);
+            MauiInterop.HideLoader();
+        }
+    }
+    private void GoToManageExpenseCategoriesPage() => NavigationManager.GoToInnerPage("/manage-expense-categories");
 }
+
+<style type="text/css" scoped>
+    .h-remainig{
+        height: calc(100vh - var(--navbar-height) - 100px);
+    }    
+    .avatar{
+        height: 80px;
+        width: 80px;
+        font-size: 50px;
+    }
+</style>

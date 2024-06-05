@@ -33,5 +33,18 @@ namespace DiplomaBlazor.Data
 
         [Ignore]
         public string DisplayStatus { get; set; }
-    }
+
+        [Ignore]
+        public IEnumerable<Expense> Expenses { get; set; }
+
+        [Ignore]
+        public string StatusBgColor => Status switch
+        {
+            TripStatus.Planned => "bg-secondary",
+            TripStatus.Ongoing => "bg-success",
+            TripStatus.Completed => "bg-primary",
+            TripStatus.Canceled => "bg-danger",
+            _ => "bg-dark"
+        };
+    }   
 }

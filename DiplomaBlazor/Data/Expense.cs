@@ -14,7 +14,7 @@ namespace DiplomaBlazor.Data
         [Required, MaxLength(100)]
         public string For { get; set; }
 
-        [Range(0.1, Double.MaxValue)]
+        [Range(0.1, Double.MaxValue, ErrorMessage = "Пожалуйста, введите корректное значение")]
         public double Amount { get; set; }
 
         [Required]

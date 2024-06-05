@@ -13,7 +13,16 @@
         <h3 class="m-0 w-100 @(Interop.IsIOS ? "text-center" : "text-start")">
             @AppState.PageTitle
         </h3>
-        <i class="bx bx-user-circle bx-sm text-dark"></i>
+        @*<i class="bx bx-user-circle bx-sm text-dark"></i>*@
+        @if (AppState.TabbarItems.Length > 0)
+        {
+            <label>
+                @foreach (var tabbarItem in AppState.TabbarItems)
+                {
+                    <i class="bx text-dark @tabbarItem.Icon" @onclick="@tabbarItem.onTap"/>
+                }
+            </label>
+        }
     </div>
 </div>
 <div class="body-content">
@@ -68,9 +77,8 @@
     }
     private void OnAppStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(AppState.SelectedMenuItem))
+        if (e.PropertyName == nameof(AppState.SelectedMenuItem) || e.PropertyName == nameof(AppState.TabbarItems))
             StateHasChanged();
-
     }
 
     private void GoToPage(string pageName)
@@ -80,7 +88,7 @@
 
     private void GoToInnerPage(string url)
     {
-        NavigationManager.NavigateTo(url);
+        NavigationManager.GoToInnerPage(url);
     }
 
     public void Dispose()

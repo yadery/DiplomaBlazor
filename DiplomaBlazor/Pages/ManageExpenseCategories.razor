@@ -1,0 +1,60 @@
+﻿@page "/manage-expense-categories"
+
+@layout InnerPagesLayout
+
+@inject AppState AppState
+@inject DropDownsService DropDowns
+@inject MauiInterop Interop
+@inject TripsService TripsService
+
+<div class="container p-3">
+    <div class="row">
+        <div class="col-12">
+            <ul class="list-group"> 
+                @foreach(var category in _categories)
+                {
+                    <li class="list-group-item">@category</li>
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private string[] _categories = Array.Empty<string>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.SetInnerPageTitle("Изменить категории");
+        AppState.AddTabbarItems(new TabbarItem("bx bx-sm bx-plus", () => AddNewCategory()));
+        await LoadCategoriesAsync();
+    }
+
+    private async Task AddNewCategory()
+    {
+        var newCategory = await Interop.ShowPromptAsync("Категория расходов", "Введите название новой категории", "Сохранить", "Введите категорию");
+        if (!string.IsNullOrWhiteSpace(newCategory))
+        {
+            Interop.ShowLoader();
+            var result = await TripsService.SaveExpenseCategoryAsync(newCategory);
+            Interop.HideLoader();
+            if (!result.IsSuccess)
+            {
+                await Interop.ShowErrorAlertAsync(result.Error ?? "Ошибка при сохранении категории");
+            }
+            else
+            {
+                await LoadCategoriesAsync();
+                StateHasChanged();
+            }
+        }
+
+    }
+    private async Task LoadCategoriesAsync()
+    {
+        Interop.ShowLoader();
+        _categories = await DropDowns.GetExpenseCategoriesAsync();
+        Interop.HideLoader();
+    }
+}

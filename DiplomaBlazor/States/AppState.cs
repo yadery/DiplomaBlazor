@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiplomaBlazor.States
 {
@@ -22,12 +17,23 @@ namespace DiplomaBlazor.States
         
         private string _innerPageTitle = string.Empty;
         public string InnerPageTitle {
-            get => InnerPageTitle;
+            get => _innerPageTitle;
             private set {
                 _innerPageTitle = value;
                 Notify();
             } 
         }
+
+        public TabbarItem[] TabbarItems { get;  set; } = Array.Empty<TabbarItem>();
+
+        public void AddTabbarItems(params TabbarItem[] tabbarItems)
+        { 
+            TabbarItems = tabbarItems;
+            Notify(nameof(TabbarItems));
+        }
+
+        public void NoTabbarItems() => AddTabbarItems(Array.Empty<TabbarItem>());
+
 
         public void SetSelectedMenuItem(string pageName)
         {

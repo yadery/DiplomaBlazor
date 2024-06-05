@@ -8,7 +8,7 @@
     protected override void OnInitialized()                                               
     {
         Interop.HideLoader();
-        if (Auth.IsAuthenticated)
+        if (Auth.IsSignedIn)
         {
             NavigationManager.NavigateTo("/home", replace: true);
         }

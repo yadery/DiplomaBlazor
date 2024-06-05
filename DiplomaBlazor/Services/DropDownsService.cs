@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DiplomaBlazor.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,5 +22,8 @@ namespace DiplomaBlazor.Services
         }
 
         public string[] GetTripStatuses() => Enum.GetNames<TripStatus>();
+
+        public async Task<string[]> GetExpenseCategoriesAsync() =>
+            (await _context.GetAllAsync<ExpenseCategory>()).Select(x => x.Name).ToArray();
     }
 }

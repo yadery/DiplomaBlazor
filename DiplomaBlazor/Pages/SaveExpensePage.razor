@@ -1,0 +1,121 @@
+﻿@page "/trips/{tripId:int}/expenses/add"
+@page "/trips/{tripId:int}/expenses/{expenseId:long}/edit"
+
+@layout InnerPagesLayout
+
+@inject MauiInterop Interop
+@inject DropDownsService DropDowns
+@inject TripsService TripService
+@inject AppState AppState
+
+@inject NavigationManager NavigationManager
+
+<div class="img-container m-0 p-0 vw-100"></div>
+
+<EditForm Model="_model" OnValidSubmit="SaveExpenseAsync">
+    <DataAnnotationsValidator />
+
+    <FormContent Heading="@_title" ButtonText="Сохранить">
+        <div class="mb-3">
+            <label class="form-label">На что</label>
+            <InputText @bind-Value="_model.For" class="form-control rounded-pill fs-6" placeholder="На что" />
+            <ValidationMessage For="() => _model.For" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Сколько</label>
+            <InputNumber @bind-Value="_model.Amount" class="form-control rounded-pill fs-6" placeholder="Сколько" />
+            <ValidationMessage For="() => _model.Amount" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Категория</label>
+            <InputSelect @bind-Value="_model.Category" class="form-control rounded-pill fs-6">
+                <option value="">Выберите категорию</option>
+                @foreach (var category in _expenseCategories)
+                {
+                    <option value="@category">@category</option>
+                }
+            </InputSelect>
+            
+            <ValidationMessage For="() => _model.Category" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Когда</label>
+            <InputDate @bind-Value="_model.SpentOn" class="form-control rounded-pill fs-6" placeholder="Когда" />
+            <ValidationMessage For="() => _model.SpentOn" />
+        </div>
+    </FormContent>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TripId { get; set; }
+
+    [Parameter]
+    public long? ExpenseId { get; set; }
+
+    Expense _model = new();
+
+    private string[] _expenseCategories = Array.Empty<string>();
+
+    private string _title = "Доабвить расходы";
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.NoTabbarItems();
+        AppState.SetInnerPageTitle("Добавить расходы");
+        Interop.ShowLoader();
+        _expenseCategories = await DropDowns.GetExpenseCategoriesAsync();
+        if (ExpenseId.HasValue && ExpenseId > 0)
+        {
+            _title = "Изменить расходы";
+            _model = await TripService.GetExpenseAsync(ExpenseId.Value);
+        }
+        AppState.SetInnerPageTitle(_title);
+        Interop.HideLoader();
+        _model.TripId = TripId;
+    }
+
+    private async Task SaveExpenseAsync()
+    {
+        Interop.ShowLoader();
+        try
+        {
+            var result = await TripService.SaveExpenseAsync(_model);
+            if (result.IsSuccess)
+            {
+                await Interop.ShowToastAsync("Расходы сохранены!");
+                NavigationManager.GoBack();
+            }
+            else
+            {
+                await Interop.ShowErrorAlertAsync(result.Error ?? "Ошибка при сохранении");
+            }
+        }
+        catch (Exception ex)
+        {
+            await Interop.ShowErrorAlertAsync(ex.Message);
+        }
+        finally
+        {
+            Interop.HideLoader();
+        }
+    }
+}
+
+<style type="text/css">
+    .img-container {
+        background-image: url('/images/money.jpg');
+        background-position-y: -100px;
+        height: 250px;
+    }
+
+
+    .category-img {
+        width: 25px;
+        height: 25px;
+    }
+
+    .category-label {
+        font-size: 12px;
+    }
+</style>

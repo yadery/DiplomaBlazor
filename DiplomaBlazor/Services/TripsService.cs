@@ -1,4 +1,5 @@
-﻿namespace DiplomaBlazor.Services
+﻿using System;
+namespace DiplomaBlazor.Services
 {
     public class TripsService
     {
@@ -20,6 +21,7 @@
 
         public async Task<MethodDataResult<Trip>> SaveTripAsync(Trip trip)
         {
+            trip.Status = Enum.Parse<TripStatus>(trip.DisplayStatus);
             try
             {
                 if (trip.Id == 0)
@@ -40,9 +42,51 @@
             }
         }
 
-        public async Task<Trip?> GetTripAsync(int tripId)
+        public async Task<Trip?> GetTripAsync(int tripId, bool includeExpenses = false)
         {
-            return await _context.FindAsync<Trip>(tripId);
+            var trip = await _context.FindAsync<Trip>(tripId);
+            if (includeExpenses)
+            {
+                trip.Expenses = await _context.GetFileteredAsync<Expense>(e => e.TripId == tripId) ?? 
+                    Enumerable.Empty<Expense>();
+            }
+            return trip;
+        }
+
+        public async Task<MethodDataResult<Expense>> SaveExpenseAsync(Expense expense)
+        {          
+            try
+            {
+                if (expense.Id == 0)
+                {
+                    //создать траты
+                    await _context.AddItemAsync<Expense>(expense);
+                }
+                else
+                {
+                    //изменить
+                    await _context.UpdateItemAsync<Expense>(expense);
+                }
+                return MethodDataResult<Expense>.Success(expense);
+            }
+            catch (Exception ex)
+            {
+                return MethodDataResult<Expense>.Fail(ex.Message);
+            }
+        }
+
+        public async Task<Expense?> GetExpenseAsync(long expenseId) =>
+            await _context.FindAsync<Expense>(expenseId);
+
+        public async Task<MethodResult> SaveExpenseCategoryAsync(string categoryName)
+        {
+            var dbCategory = await _context.FindAsync<ExpenseCategory>(categoryName);
+            if (dbCategory is not null)
+            {
+                return MethodResult.Fail($"Категория [{categoryName}] уже существует");
+            }
+            await _context.AddItemAsync<ExpenseCategory>(new ExpenseCategory(categoryName));
+            return MethodResult.Success();
         }
     }
 }
