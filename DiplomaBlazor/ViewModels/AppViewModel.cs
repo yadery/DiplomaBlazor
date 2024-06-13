@@ -11,7 +11,6 @@ namespace DiplomaBlazor.ViewModels
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-
         private bool _isBusy = true;
 
         public bool IsBusy { 

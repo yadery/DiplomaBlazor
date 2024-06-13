@@ -34,7 +34,6 @@ namespace DiplomaBlazor.States
 
         public void NoTabbarItems() => AddTabbarItems(Array.Empty<TabbarItem>());
 
-
         public void SetSelectedMenuItem(string pageName)
         {
             SelectedMenuItem = pageName;

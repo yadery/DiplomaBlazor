@@ -8,7 +8,7 @@ namespace DiplomaBlazor
 {
     public static class AppConstants
     {
-        public const string AppName = "Приложение приложение";
+        public const string AppName = "Приложение Trips";
         public static class MenuItems
         { 
             public const string Home = "Home";

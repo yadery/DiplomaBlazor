@@ -11,13 +11,13 @@ namespace DiplomaBlazor.Data
   
         public int TripId { get; set; }
 
-        [Required, MaxLength(100)]
+        [Required(ErrorMessage = "Пожалуйста, введите корректное значение"), MaxLength(100)]
         public string For { get; set; }
 
         [Range(0.1, Double.MaxValue, ErrorMessage = "Пожалуйста, введите корректное значение")]
         public double Amount { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Пожалуйста, введите корректное значение")]
         public string Category { get; set; } 
 
         public DateTime? SpentOn { get; set; }

@@ -20,10 +20,10 @@ namespace DiplomaBlazor
         public void HideLoader() => _appViewModel.ToggleIsBusy(false);
 
         public async Task ShowErrorAlertAsync(string message, string? title = "Ошибка") =>
-            await App.Current.MainPage.DisplayAlert(title, message, "Ok");
+            await App.Current.MainPage.DisplayAlert(title, message, "Ок");
 
         public async Task ShowSuccessAlertAsync(string message, string? title = "Успех") =>
-            await App.Current.MainPage.DisplayAlert(title, message, "Ok");
+            await App.Current.MainPage.DisplayAlert(title, message, "Ок");
         public bool IsAndroid => DeviceInfo.Current.Platform == DevicePlatform.Android;
         public bool IsIOS => DeviceInfo.Current.Platform == DevicePlatform.iOS;
 

@@ -9,9 +9,9 @@ namespace DiplomaBlazor.Models
 {
     internal class SignInModel
     {
-        [Required, MaxLength(20)]
+        [Required(ErrorMessage = "Введите корректные значения"), MaxLength(20)]
         public string Username { get; set; }
-        [Required, MaxLength(20)]
+        [Required(ErrorMessage = "Введите корректные значения"), MaxLength(20)]
         public string Password { get; set; }
     }
 }
