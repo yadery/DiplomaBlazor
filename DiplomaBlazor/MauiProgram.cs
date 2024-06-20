@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using DiplomaBlazor.ViewModels;
 using Microsoft.Extensions.Logging;
-
+using Syncfusion.Blazor;
 
 namespace DiplomaBlazor;
 
@@ -16,12 +16,13 @@ public static class MauiProgram
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 			})
-            .UseMauiCommunityToolkit();
+			.UseMauiCommunityToolkit();
 
 		builder.Services.AddMauiBlazorWebView();
+        builder.Services.AddMemoryCache();
 
 #if DEBUG
-		builder.Services.AddBlazorWebViewDeveloperTools();
+        builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
 #endif
 
@@ -37,10 +38,12 @@ public static class MauiProgram
 
 		services.AddSingleton<DatabaseContext>()
 				.AddTransient<SeedDataService>();
-
+				
 		services.AddTransient<AuthService>()
                 .AddSingleton<TripsService>()
-				.AddTransient<DropDownsService>();
+				.AddSingleton<DocumentsService>()
+				.AddTransient<DropDownsService>()
+				.AddSyncfusionBlazor();
 	}
 }
 

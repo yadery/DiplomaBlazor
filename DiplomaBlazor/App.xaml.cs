@@ -19,4 +19,5 @@ public partial class App : Application
         base.OnStart();
         await _seedDataService.SeedDataAsync();
     }
+    
 }

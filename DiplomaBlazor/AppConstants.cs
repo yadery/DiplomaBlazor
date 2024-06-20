@@ -12,8 +12,8 @@ namespace DiplomaBlazor
         public static class MenuItems
         { 
             public const string Home = "Home";
-            public const string Trips = "Trips";
-            public const string Settings = "Settings";
+            public const string Trips = "Путешествия";
+            public const string Settings = "Настройки";
         }
     }
 }

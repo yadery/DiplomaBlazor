@@ -15,7 +15,7 @@
                 <li class="list-group-item" @onclick="ChangeNameAsync">
                     <div class="hstack gap-3"> 
                         <i class="bx bx-sm bx-user"></i>
-                        <label>Мой профиль</label>
+                        <label>Изменить имя</label>
                     </div>
                 </li>
                 <li class="list-group-item" @onclick="ChangePasswordAsync">
@@ -28,6 +28,12 @@
                     <div class="hstack gap-3">
                         <i class="bx bx-sm bx-grid"></i>
                         <label>Управление категориями расходов</label>
+                    </div>
+                </li>
+                <li class="list-group-item" @onclick="GoToFilesPage">
+                    <div class="hstack gap-3">
+                        <i class="bx bx-sm bx-copy-alt"></i>
+                        <label>Добавление документов</label>
                     </div>
                 </li>
             </ul>
@@ -53,8 +59,8 @@
     }
     private async Task ChangeNameAsync()
     {
-        var newName = await MauiInterop.ShowPromptAsync("Ваше имя", "Введите ваше имя", "Сохранить", Auth.CurrentUser.Name);
-        if (!string.IsNullOrEmpty(newName))
+        var newName = await MauiInterop.ShowPromptAsync("Изменить имя?", "Введите ваше имя", "Сохранить", Auth.CurrentUser.Name);
+        if (!string.IsNullOrWhiteSpace(newName))
         {
             MauiInterop.ShowLoader();
             await Auth.ChangeNameAsync(newName);
@@ -64,7 +70,7 @@
     private async Task ChangePasswordAsync()
     {
         var newPassword = await MauiInterop.ShowPromptAsync("Изменить пароль?", "Введите новый пароль", "Сохранить", string.Empty);
-        if (!string.IsNullOrEmpty(newPassword))
+        if (!string.IsNullOrWhiteSpace(newPassword))
         {
             MauiInterop.ShowLoader();
             await Auth.ChangePasswordAsync(newPassword);
@@ -72,6 +78,7 @@
         }
     }
     private void GoToManageExpenseCategoriesPage() => NavigationManager.GoToInnerPage("/manage-expense-categories");
+    private void GoToFilesPage() => NavigationManager.GoToInnerPage("/manage-files");
 }
 
 <style type="text/css" scoped>

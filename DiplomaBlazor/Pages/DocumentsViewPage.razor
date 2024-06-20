@@ -1,0 +1,60 @@
+﻿@page "/manage-files/{DocId:int}/view"
+
+@inject MauiInterop Interop
+@inject DropDownsService DropDowns
+@inject TripsService TripService
+@inject AppState AppState
+@inject DocumentsService DocumentsService
+
+
+@using Syncfusion.Blazor.SfPdfViewer
+
+<SfPdfViewer2 ID="viewer"
+              DocumentPath="@DocumentPath"
+              Height="100%"
+              Width="100%">
+
+</SfPdfViewer2>
+
+@code {
+    [Parameter]
+    public int? DocId { get; set; }
+
+    Documents _model = new();
+
+    public SfPdfViewer2 viewer { get; set; }
+    MemoryStream stream;
+    public string DocumentPath { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppState.NoTabbarItems();
+        Interop.ShowLoader();
+
+        if(DocId > 0)
+        {
+            _model = await DocumentsService.GetDocsAsync(DocId.Value);
+            AppState.SetInnerPageTitle("Просмотр документа");
+        }
+        byte[] byteArray = _model.Content;
+        string base64String = Convert.ToBase64String(byteArray);
+        DocumentPath = "data:application/pdf;base64," + base64String;
+        Interop.HideLoader();
+    }
+
+    public async void SaveAsStream(MouseEventArgs args)
+    {
+        // Retrieves the updated PDF document with the applied changes.
+        byte[] updatedDocumentData = await viewer.GetDocumentAsync();
+        // Saves the updated PDF document to a MemoryStream.
+        stream = new MemoryStream(updatedDocumentData);
+        // Loads a PDF document from the MemoryStream with the applied changes.
+        await viewer.LoadAsync(stream);
+    }
+
+    public async void LoadFromStream(MouseEventArgs args)
+    {
+        await viewer.LoadAsync(stream);
+    }
+}

@@ -79,11 +79,11 @@
                     <InputSelect @bind-Value="_model.DisplayStatus" class="form-control rounded-pill fs-6">
                         @foreach(var status in _statuses)
                         {
-                            <option value="@status">@status</option>
+                    <option value="@status">@status</option>
                         }
                     </InputSelect>
 
-                    <ValidationMessage For="() => _model.DisplayStatus" />
+            <ValidationMessage For="() => _model.Status" />
                 </div>
     </FormContent>
 </EditForm>

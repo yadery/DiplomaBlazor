@@ -61,7 +61,7 @@ namespace DiplomaBlazor.Services
         
         public void SignOut() 
         {
-            _preferences.Remove(LogggedInKey);
+            _preferences.Remove(LogggedInKey, string.Empty);
         }
 
         public async Task ChangeNameAsync(string newName)

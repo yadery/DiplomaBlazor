@@ -6,7 +6,7 @@
 @inject MauiInterop Maui
 
     <EditForm Model="_model" OnValidSubmit="SignInAsync">
-        <DataAnnotationsValidator er/>
+        <DataAnnotationsValidator />
         <div class="card border-0 shadow-sm">
             <div class="card-body text-center">
                 <h4>Добро пожаловать</h4>
@@ -29,7 +29,7 @@
             </div>
         </div>
     </EditForm>
-    <p class="text-end mt-3">Впервые здесь? <NavLink href="/signup">Создать аккаунт</NavLink></p>
+    <p class="text-center mt-3">Впервые здесь? <NavLink href="/signup">Создать аккаунт</NavLink></p>
 
 
 @code {

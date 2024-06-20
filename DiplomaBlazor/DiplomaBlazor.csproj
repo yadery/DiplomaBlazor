@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
     <PropertyGroup>
-      <!--<NeutralLanguage>ru-ru</NeutralLanguage>-->
-      <!--<InvariantGlobalization>true</InvariantGlobalization>-->
         <TargetFrameworks>net7.0-android;net7.0-ios;net7.0-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net7.0-windows10.0.19041.0</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
@@ -13,7 +11,7 @@
         <SingleProject>true</SingleProject>
         <ImplicitUsings>enable</ImplicitUsings>
         <EnableDefaultCssItems>false</EnableDefaultCssItems>
-
+        
         <!-- Display name -->
         <ApplicationTitle>DiplomaBlazor</ApplicationTitle>
 
@@ -31,7 +29,7 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-        <NeutralLanguage>ru</NeutralLanguage>
+        <NeutralLanguage>en</NeutralLanguage>
     </PropertyGroup>
 
     <ItemGroup>
@@ -55,13 +53,19 @@
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Maui" Version="5.3.0" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+        <PackageReference Include="PSPDFKit.MAUI.SDK" Version="1.1.0" />
         <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
         <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.4" />
+        <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="26.1.38" />
+        <PackageReference Include="Syncfusion.Pdf.Net.Core" Version="26.1.38" />
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Resources\Documents\" />
       <Folder Include="Utilities\" />
       <Folder Include="wwwroot\boxicons\" />
     </ItemGroup>
+
+    <ProjectExtensions><VisualStudio><UserProperties XamarinHotReloadDebuggerTimeoutExceptionDiplomaBlazorHideInfoBar="True" /></VisualStudio></ProjectExtensions>
 
 </Project>

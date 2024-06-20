@@ -1,0 +1,152 @@
+﻿@page "/manage-files"
+
+@layout InnerPagesLayout
+
+@inject AppState AppState
+@inject DropDownsService DropDowns
+@inject MauiInterop Interop
+@inject DocumentsService DocumentsService
+@inject NavigationManager NavigationManager
+
+@using CommunityToolkit.Maui.Alerts;
+@using CommunityToolkit.Maui.Storage;
+@using Microsoft.Maui.Storage;
+@using System.Reflection;
+@using System.ComponentModel;
+@using System.Windows.Input;
+@using PSPDFKit.Sdk;
+
+<div>
+ @if (!_docs.Any())
+    {
+        <div class="empty-trips-container d-flex w-100 flex-column align-items-center justify-content-center">
+            <label class="text-muted fs-4 mb-2">Вы еще не добавили документы</label>
+            <button type="button" class="btn btn-secondary rounded-pill" @onclick="PickAndShow">
+                <i class="bx bx-plus m-0 p-0"></i>
+                <span>Добавить</span>
+            </button>
+        </div>
+    }
+    @*@onclick="() => GoToDocumentViewPage(doc.Id)"*@
+    else
+    {
+        <div class="row py-3 ">
+            @foreach (var doc in _docs)
+            {
+                <div class="col-12 mb-3">
+                    <div class="card" @onclick="() => GoToDocumentViewPage(doc.Id)">
+                        <div class="hstack gap-3">
+                            
+                            <div class="vr"></div>
+                            <div class="vstack p-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3>@doc.Id</h3>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h3>@doc.Title</h3>                                    
+                                </div>                               
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }    
+        </div>
+    }
+</div>
+
+
+@code {
+    private IEnumerable<Documents> _docs = Enumerable.Empty<Documents>();
+    Documents _model = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Interop.ShowLoader();
+        _docs = await DocumentsService.GetDocsAsync();
+        AppState.SetInnerPageTitle("Управление файлами");
+        AppState.AddTabbarItems(new TabbarItem("bx bx-sm bx-plus", () => PickAndShow()));
+        Interop.HideLoader();
+    }
+
+
+    private async Task SaveDocsAsync()
+    {
+        Interop.ShowLoader();
+        try
+        {
+            var result = await DocumentsService.SaveDocsAsync(_model);
+            if (result.IsSuccess)
+            {
+                await Interop.ShowToastAsync("Документ добавлен!");
+                NavigationManager.GoBack();
+            }
+            else
+            {
+                await Interop.ShowErrorAlertAsync(result.Error ?? "Ошибка при добавлении");
+            }
+        }
+        catch (Exception ex)
+        {
+            await Interop.ShowErrorAlertAsync(ex.Message);
+        }
+        finally
+        {
+            Interop.HideLoader();
+        }
+    }
+
+
+    public async Task<FileResult> PickAndShow()
+    {
+        Interop.ShowLoader();
+        try
+        {
+            var result = await FilePicker.Default.PickAsync(new PickOptions
+                {
+                    PickerTitle = "Выберите файл",
+                    FileTypes = FilePickerFileType.Pdf
+                });
+            if (result != null)
+            {
+                if (result.FileName.EndsWith("pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    byte[] bytes;
+                    var pdfDocumentStream = await result.OpenReadAsync();
+                    _model.Title = result.FileName;
+
+                    using (var reader = new StreamReader(pdfDocumentStream))
+                    {
+                        bytes = System.Text.Encoding.UTF8.GetBytes(reader.ReadToEnd());
+                    }
+                    _model.Content = bytes;
+                    await SaveDocsAsync();
+
+                    //var fileSaverResult = await FileSaver.Default.SaveAsync( "text.pdf", pdfDocumentStream, CancellationToken.None);
+                    //if (fileSaverResult.IsSuccessful)
+                    //{
+                    //    Toast.Make($"The file was saved successfully");
+                    //}
+                    //else
+                    //{
+                    //    Toast.Make($"The file was not saved successfully with error");
+                    //}
+                }
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            // The user canceled or something went wrong
+        }
+        finally
+        {
+            Interop.HideLoader();    
+
+        }
+
+        return null;
+    }
+
+    public void GoToDocumentViewPage(int docId) => NavigationManager.GoToInnerPage($"/manage-files/{docId}/view");
+}

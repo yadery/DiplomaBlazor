@@ -8,7 +8,7 @@ namespace DiplomaBlazor.Models
         public string  Name { get; set; }
         [Required(ErrorMessage = "Введите корректные значения"), MaxLength(20)]
         public string Username { get; set; }
-        [Required(ErrorMessage = "Введите корректные значения"), MaxLength(20)]
+        [Required(ErrorMessage = "Введите корректные значения"), MinLength(8)]
         public string Password { get; set; }
     }
 }
